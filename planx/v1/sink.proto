@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package planx.v1;
+
+option go_package = "github.com/planx-lab/planx-proto/gen/go/planx/v1;planxv1";
+
+import "planx/v1/common.proto";
+
+// SinkPlugin defines the gRPC service for Sink plugins.
+// Sink plugins write batches to external systems.
+service SinkPlugin {
+    // CreateSession initializes a new session with the given configuration.
+    rpc CreateSession(SessionCreateRequest) returns (SessionCreateResponse);
+
+    // Write receives batches and writes them to the destination.
+    // Returns ACK for each batch or group of batches.
+    // Sink MUST propagate errors early.
+    rpc Write(stream BatchRequest) returns (stream AckResponse);
+
+    // CloseSession terminates the session.
+    rpc CloseSession(SessionCloseRequest) returns (Empty);
+}

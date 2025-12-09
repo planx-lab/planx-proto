@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package planx.v1;
+
+option go_package = "github.com/planx-lab/planx-proto/gen/go/planx/v1;planxv1";
+
+import "planx/v1/common.proto";
+
+// SourcePlugin defines the gRPC service for Source plugins.
+// Source plugins read data from external systems and stream batches to the engine.
+service SourcePlugin {
+    // CreateSession initializes a new session with the given configuration.
+    // Called once per tenant/pipeline instance.
+    rpc CreateSession(SessionCreateRequest) returns (SessionCreateResponse);
+
+    // OpenStream starts streaming batches from the source.
+    // Plugin MUST respect window_size and wait for ACK to continue.
+    rpc OpenStream(StreamOpenRequest) returns (stream BatchResponse);
+
+    // Ack acknowledges processed batches and updates the flow control window.
+    // Plugin MUST resume streaming after receiving ACK.
+    rpc Ack(AckRequest) returns (AckResponse);
+
+    // CloseSession terminates the session and releases resources.
+    rpc CloseSession(SessionCloseRequest) returns (Empty);
+}
