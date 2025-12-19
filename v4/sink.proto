@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package planx.plugin.v4;
+
+option go_package = "github.com/planx-lab/planx-proto/gen/go/planx/plugin/v4;pluginv4";
+
+import "common.proto";
+
+// ----------------------------
+// Sink Plugin Service
+// ----------------------------
+
+service SinkPlugin {
+
+  rpc CreateSession(SessionCreateRequest)
+      returns (SessionCreateResponse);
+
+  rpc WriteBatch(Batch)
+      returns (AckResponse);
+
+  rpc CloseSession(SessionCloseRequest)
+      returns (Empty);
+}

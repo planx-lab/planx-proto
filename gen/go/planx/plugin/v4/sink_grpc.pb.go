@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.0
 // - protoc             (unknown)
-// source: planx/v1/sink.proto
+// source: sink.proto
 
-package planxv1
+package pluginv4
 
 import (
 	context "context"
@@ -19,25 +19,17 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	SinkPlugin_CreateSession_FullMethodName = "/planx.v1.SinkPlugin/CreateSession"
-	SinkPlugin_Write_FullMethodName         = "/planx.v1.SinkPlugin/Write"
-	SinkPlugin_CloseSession_FullMethodName  = "/planx.v1.SinkPlugin/CloseSession"
+	SinkPlugin_CreateSession_FullMethodName = "/planx.plugin.v4.SinkPlugin/CreateSession"
+	SinkPlugin_WriteBatch_FullMethodName    = "/planx.plugin.v4.SinkPlugin/WriteBatch"
+	SinkPlugin_CloseSession_FullMethodName  = "/planx.plugin.v4.SinkPlugin/CloseSession"
 )
 
 // SinkPluginClient is the client API for SinkPlugin service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-//
-// SinkPlugin defines the gRPC service for Sink plugins.
-// Sink plugins write batches to external systems.
 type SinkPluginClient interface {
-	// CreateSession initializes a new session with the given configuration.
 	CreateSession(ctx context.Context, in *SessionCreateRequest, opts ...grpc.CallOption) (*SessionCreateResponse, error)
-	// Write receives batches and writes them to the destination.
-	// Returns ACK for each batch or group of batches.
-	// Sink MUST propagate errors early.
-	Write(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[BatchRequest, AckResponse], error)
-	// CloseSession terminates the session.
+	WriteBatch(ctx context.Context, in *Batch, opts ...grpc.CallOption) (*AckResponse, error)
 	CloseSession(ctx context.Context, in *SessionCloseRequest, opts ...grpc.CallOption) (*Empty, error)
 }
 
@@ -59,18 +51,15 @@ func (c *sinkPluginClient) CreateSession(ctx context.Context, in *SessionCreateR
 	return out, nil
 }
 
-func (c *sinkPluginClient) Write(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[BatchRequest, AckResponse], error) {
+func (c *sinkPluginClient) WriteBatch(ctx context.Context, in *Batch, opts ...grpc.CallOption) (*AckResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &SinkPlugin_ServiceDesc.Streams[0], SinkPlugin_Write_FullMethodName, cOpts...)
+	out := new(AckResponse)
+	err := c.cc.Invoke(ctx, SinkPlugin_WriteBatch_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[BatchRequest, AckResponse]{ClientStream: stream}
-	return x, nil
+	return out, nil
 }
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type SinkPlugin_WriteClient = grpc.BidiStreamingClient[BatchRequest, AckResponse]
 
 func (c *sinkPluginClient) CloseSession(ctx context.Context, in *SessionCloseRequest, opts ...grpc.CallOption) (*Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
@@ -85,17 +74,9 @@ func (c *sinkPluginClient) CloseSession(ctx context.Context, in *SessionCloseReq
 // SinkPluginServer is the server API for SinkPlugin service.
 // All implementations must embed UnimplementedSinkPluginServer
 // for forward compatibility.
-//
-// SinkPlugin defines the gRPC service for Sink plugins.
-// Sink plugins write batches to external systems.
 type SinkPluginServer interface {
-	// CreateSession initializes a new session with the given configuration.
 	CreateSession(context.Context, *SessionCreateRequest) (*SessionCreateResponse, error)
-	// Write receives batches and writes them to the destination.
-	// Returns ACK for each batch or group of batches.
-	// Sink MUST propagate errors early.
-	Write(grpc.BidiStreamingServer[BatchRequest, AckResponse]) error
-	// CloseSession terminates the session.
+	WriteBatch(context.Context, *Batch) (*AckResponse, error)
 	CloseSession(context.Context, *SessionCloseRequest) (*Empty, error)
 	mustEmbedUnimplementedSinkPluginServer()
 }
@@ -110,8 +91,8 @@ type UnimplementedSinkPluginServer struct{}
 func (UnimplementedSinkPluginServer) CreateSession(context.Context, *SessionCreateRequest) (*SessionCreateResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateSession not implemented")
 }
-func (UnimplementedSinkPluginServer) Write(grpc.BidiStreamingServer[BatchRequest, AckResponse]) error {
-	return status.Error(codes.Unimplemented, "method Write not implemented")
+func (UnimplementedSinkPluginServer) WriteBatch(context.Context, *Batch) (*AckResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method WriteBatch not implemented")
 }
 func (UnimplementedSinkPluginServer) CloseSession(context.Context, *SessionCloseRequest) (*Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method CloseSession not implemented")
@@ -155,12 +136,23 @@ func _SinkPlugin_CreateSession_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SinkPlugin_Write_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(SinkPluginServer).Write(&grpc.GenericServerStream[BatchRequest, AckResponse]{ServerStream: stream})
+func _SinkPlugin_WriteBatch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Batch)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SinkPluginServer).WriteBatch(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SinkPlugin_WriteBatch_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SinkPluginServer).WriteBatch(ctx, req.(*Batch))
+	}
+	return interceptor(ctx, in, info, handler)
 }
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type SinkPlugin_WriteServer = grpc.BidiStreamingServer[BatchRequest, AckResponse]
 
 func _SinkPlugin_CloseSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SessionCloseRequest)
@@ -184,7 +176,7 @@ func _SinkPlugin_CloseSession_Handler(srv interface{}, ctx context.Context, dec 
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var SinkPlugin_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "planx.v1.SinkPlugin",
+	ServiceName: "planx.plugin.v4.SinkPlugin",
 	HandlerType: (*SinkPluginServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -192,17 +184,14 @@ var SinkPlugin_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SinkPlugin_CreateSession_Handler,
 		},
 		{
+			MethodName: "WriteBatch",
+			Handler:    _SinkPlugin_WriteBatch_Handler,
+		},
+		{
 			MethodName: "CloseSession",
 			Handler:    _SinkPlugin_CloseSession_Handler,
 		},
 	},
-	Streams: []grpc.StreamDesc{
-		{
-			StreamName:    "Write",
-			Handler:       _SinkPlugin_Write_Handler,
-			ServerStreams: true,
-			ClientStreams: true,
-		},
-	},
-	Metadata: "planx/v1/sink.proto",
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "sink.proto",
 }

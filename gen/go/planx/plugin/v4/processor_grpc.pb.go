@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.0
 // - protoc             (unknown)
-// source: planx/v1/processor.proto
+// source: processor.proto
 
-package planxv1
+package pluginv4
 
 import (
 	context "context"
@@ -19,28 +19,18 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ProcessorPlugin_CreateSession_FullMethodName = "/planx.v1.ProcessorPlugin/CreateSession"
-	ProcessorPlugin_Process_FullMethodName       = "/planx.v1.ProcessorPlugin/Process"
-	ProcessorPlugin_Ack_FullMethodName           = "/planx.v1.ProcessorPlugin/Ack"
-	ProcessorPlugin_CloseSession_FullMethodName  = "/planx.v1.ProcessorPlugin/CloseSession"
+	ProcessorPlugin_CreateSession_FullMethodName = "/planx.plugin.v4.ProcessorPlugin/CreateSession"
+	ProcessorPlugin_Process_FullMethodName       = "/planx.plugin.v4.ProcessorPlugin/Process"
+	ProcessorPlugin_CloseSession_FullMethodName  = "/planx.plugin.v4.ProcessorPlugin/CloseSession"
 )
 
 // ProcessorPluginClient is the client API for ProcessorPlugin service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-//
-// ProcessorPlugin defines the gRPC service for Processor plugins.
-// Processor plugins transform batches: receive input batches and produce output batches.
 type ProcessorPluginClient interface {
-	// CreateSession initializes a new session with the given configuration.
 	CreateSession(ctx context.Context, in *SessionCreateRequest, opts ...grpc.CallOption) (*SessionCreateResponse, error)
-	// Process receives batches and produces transformed batches.
-	// Bidirectional streaming for continuous processing.
-	// Processor MUST consume batches sequentially and honor window limits.
-	Process(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[BatchRequest, BatchResponse], error)
-	// Ack acknowledges processed batches and updates flow control.
-	Ack(ctx context.Context, in *AckRequest, opts ...grpc.CallOption) (*AckResponse, error)
-	// CloseSession terminates the session.
+	// Transform input batch to output batch
+	Process(ctx context.Context, in *Batch, opts ...grpc.CallOption) (*Batch, error)
 	CloseSession(ctx context.Context, in *SessionCloseRequest, opts ...grpc.CallOption) (*Empty, error)
 }
 
@@ -62,23 +52,10 @@ func (c *processorPluginClient) CreateSession(ctx context.Context, in *SessionCr
 	return out, nil
 }
 
-func (c *processorPluginClient) Process(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[BatchRequest, BatchResponse], error) {
+func (c *processorPluginClient) Process(ctx context.Context, in *Batch, opts ...grpc.CallOption) (*Batch, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &ProcessorPlugin_ServiceDesc.Streams[0], ProcessorPlugin_Process_FullMethodName, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &grpc.GenericClientStream[BatchRequest, BatchResponse]{ClientStream: stream}
-	return x, nil
-}
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type ProcessorPlugin_ProcessClient = grpc.BidiStreamingClient[BatchRequest, BatchResponse]
-
-func (c *processorPluginClient) Ack(ctx context.Context, in *AckRequest, opts ...grpc.CallOption) (*AckResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AckResponse)
-	err := c.cc.Invoke(ctx, ProcessorPlugin_Ack_FullMethodName, in, out, cOpts...)
+	out := new(Batch)
+	err := c.cc.Invoke(ctx, ProcessorPlugin_Process_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -98,19 +75,10 @@ func (c *processorPluginClient) CloseSession(ctx context.Context, in *SessionClo
 // ProcessorPluginServer is the server API for ProcessorPlugin service.
 // All implementations must embed UnimplementedProcessorPluginServer
 // for forward compatibility.
-//
-// ProcessorPlugin defines the gRPC service for Processor plugins.
-// Processor plugins transform batches: receive input batches and produce output batches.
 type ProcessorPluginServer interface {
-	// CreateSession initializes a new session with the given configuration.
 	CreateSession(context.Context, *SessionCreateRequest) (*SessionCreateResponse, error)
-	// Process receives batches and produces transformed batches.
-	// Bidirectional streaming for continuous processing.
-	// Processor MUST consume batches sequentially and honor window limits.
-	Process(grpc.BidiStreamingServer[BatchRequest, BatchResponse]) error
-	// Ack acknowledges processed batches and updates flow control.
-	Ack(context.Context, *AckRequest) (*AckResponse, error)
-	// CloseSession terminates the session.
+	// Transform input batch to output batch
+	Process(context.Context, *Batch) (*Batch, error)
 	CloseSession(context.Context, *SessionCloseRequest) (*Empty, error)
 	mustEmbedUnimplementedProcessorPluginServer()
 }
@@ -125,11 +93,8 @@ type UnimplementedProcessorPluginServer struct{}
 func (UnimplementedProcessorPluginServer) CreateSession(context.Context, *SessionCreateRequest) (*SessionCreateResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateSession not implemented")
 }
-func (UnimplementedProcessorPluginServer) Process(grpc.BidiStreamingServer[BatchRequest, BatchResponse]) error {
-	return status.Error(codes.Unimplemented, "method Process not implemented")
-}
-func (UnimplementedProcessorPluginServer) Ack(context.Context, *AckRequest) (*AckResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method Ack not implemented")
+func (UnimplementedProcessorPluginServer) Process(context.Context, *Batch) (*Batch, error) {
+	return nil, status.Error(codes.Unimplemented, "method Process not implemented")
 }
 func (UnimplementedProcessorPluginServer) CloseSession(context.Context, *SessionCloseRequest) (*Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method CloseSession not implemented")
@@ -173,27 +138,20 @@ func _ProcessorPlugin_CreateSession_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ProcessorPlugin_Process_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(ProcessorPluginServer).Process(&grpc.GenericServerStream[BatchRequest, BatchResponse]{ServerStream: stream})
-}
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type ProcessorPlugin_ProcessServer = grpc.BidiStreamingServer[BatchRequest, BatchResponse]
-
-func _ProcessorPlugin_Ack_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AckRequest)
+func _ProcessorPlugin_Process_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Batch)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProcessorPluginServer).Ack(ctx, in)
+		return srv.(ProcessorPluginServer).Process(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ProcessorPlugin_Ack_FullMethodName,
+		FullMethod: ProcessorPlugin_Process_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProcessorPluginServer).Ack(ctx, req.(*AckRequest))
+		return srv.(ProcessorPluginServer).Process(ctx, req.(*Batch))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -220,7 +178,7 @@ func _ProcessorPlugin_CloseSession_Handler(srv interface{}, ctx context.Context,
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ProcessorPlugin_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "planx.v1.ProcessorPlugin",
+	ServiceName: "planx.plugin.v4.ProcessorPlugin",
 	HandlerType: (*ProcessorPluginServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -228,21 +186,14 @@ var ProcessorPlugin_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ProcessorPlugin_CreateSession_Handler,
 		},
 		{
-			MethodName: "Ack",
-			Handler:    _ProcessorPlugin_Ack_Handler,
+			MethodName: "Process",
+			Handler:    _ProcessorPlugin_Process_Handler,
 		},
 		{
 			MethodName: "CloseSession",
 			Handler:    _ProcessorPlugin_CloseSession_Handler,
 		},
 	},
-	Streams: []grpc.StreamDesc{
-		{
-			StreamName:    "Process",
-			Handler:       _ProcessorPlugin_Process_Handler,
-			ServerStreams: true,
-			ClientStreams: true,
-		},
-	},
-	Metadata: "planx/v1/processor.proto",
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "processor.proto",
 }

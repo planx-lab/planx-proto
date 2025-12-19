@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package planx.plugin.v4;
+
+option go_package = "github.com/planx-lab/planx-proto/gen/go/planx/plugin/v4;pluginv4";
+
+import "common.proto";
+
+// ----------------------------
+// Processor Plugin Service
+// ----------------------------
+
+service ProcessorPlugin {
+
+  rpc CreateSession(SessionCreateRequest)
+      returns (SessionCreateResponse);
+
+  // Transform input batch to output batch
+  rpc Process(Batch)
+      returns (Batch);
+
+  rpc CloseSession(SessionCloseRequest)
+      returns (Empty);
+}

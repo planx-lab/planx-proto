@@ -1,6 +1,6 @@
 version: v2
 modules:
-  - path: .
+  - path: v4
     name: buf.build/planx-lab/planx-proto
 lint:
   use:

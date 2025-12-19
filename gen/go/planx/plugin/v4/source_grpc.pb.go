@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.0
 // - protoc             (unknown)
-// source: planx/v1/source.proto
+// source: source.proto
 
-package planxv1
+package pluginv4
 
 import (
 	context "context"
@@ -19,29 +19,23 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	SourcePlugin_CreateSession_FullMethodName = "/planx.v1.SourcePlugin/CreateSession"
-	SourcePlugin_OpenStream_FullMethodName    = "/planx.v1.SourcePlugin/OpenStream"
-	SourcePlugin_Ack_FullMethodName           = "/planx.v1.SourcePlugin/Ack"
-	SourcePlugin_CloseSession_FullMethodName  = "/planx.v1.SourcePlugin/CloseSession"
+	SourcePlugin_CreateSession_FullMethodName = "/planx.plugin.v4.SourcePlugin/CreateSession"
+	SourcePlugin_OpenStream_FullMethodName    = "/planx.plugin.v4.SourcePlugin/OpenStream"
+	SourcePlugin_Ack_FullMethodName           = "/planx.plugin.v4.SourcePlugin/Ack"
+	SourcePlugin_CloseSession_FullMethodName  = "/planx.plugin.v4.SourcePlugin/CloseSession"
 )
 
 // SourcePluginClient is the client API for SourcePlugin service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-//
-// SourcePlugin defines the gRPC service for Source plugins.
-// Source plugins read data from external systems and stream batches to the engine.
 type SourcePluginClient interface {
-	// CreateSession initializes a new session with the given configuration.
-	// Called once per tenant/pipeline instance.
+	// Create a new logical session
 	CreateSession(ctx context.Context, in *SessionCreateRequest, opts ...grpc.CallOption) (*SessionCreateResponse, error)
-	// OpenStream starts streaming batches from the source.
-	// Plugin MUST respect window_size and wait for ACK to continue.
-	OpenStream(ctx context.Context, in *StreamOpenRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[BatchResponse], error)
-	// Ack acknowledges processed batches and updates the flow control window.
-	// Plugin MUST resume streaming after receiving ACK.
+	// Open a streaming batch channel
+	OpenStream(ctx context.Context, in *StreamOpenRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Batch], error)
+	// Acknowledge processed batches & update window
 	Ack(ctx context.Context, in *AckRequest, opts ...grpc.CallOption) (*AckResponse, error)
-	// CloseSession terminates the session and releases resources.
+	// Close the session
 	CloseSession(ctx context.Context, in *SessionCloseRequest, opts ...grpc.CallOption) (*Empty, error)
 }
 
@@ -63,13 +57,13 @@ func (c *sourcePluginClient) CreateSession(ctx context.Context, in *SessionCreat
 	return out, nil
 }
 
-func (c *sourcePluginClient) OpenStream(ctx context.Context, in *StreamOpenRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[BatchResponse], error) {
+func (c *sourcePluginClient) OpenStream(ctx context.Context, in *StreamOpenRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Batch], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &SourcePlugin_ServiceDesc.Streams[0], SourcePlugin_OpenStream_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[StreamOpenRequest, BatchResponse]{ClientStream: stream}
+	x := &grpc.GenericClientStream[StreamOpenRequest, Batch]{ClientStream: stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -80,7 +74,7 @@ func (c *sourcePluginClient) OpenStream(ctx context.Context, in *StreamOpenReque
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type SourcePlugin_OpenStreamClient = grpc.ServerStreamingClient[BatchResponse]
+type SourcePlugin_OpenStreamClient = grpc.ServerStreamingClient[Batch]
 
 func (c *sourcePluginClient) Ack(ctx context.Context, in *AckRequest, opts ...grpc.CallOption) (*AckResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
@@ -105,20 +99,14 @@ func (c *sourcePluginClient) CloseSession(ctx context.Context, in *SessionCloseR
 // SourcePluginServer is the server API for SourcePlugin service.
 // All implementations must embed UnimplementedSourcePluginServer
 // for forward compatibility.
-//
-// SourcePlugin defines the gRPC service for Source plugins.
-// Source plugins read data from external systems and stream batches to the engine.
 type SourcePluginServer interface {
-	// CreateSession initializes a new session with the given configuration.
-	// Called once per tenant/pipeline instance.
+	// Create a new logical session
 	CreateSession(context.Context, *SessionCreateRequest) (*SessionCreateResponse, error)
-	// OpenStream starts streaming batches from the source.
-	// Plugin MUST respect window_size and wait for ACK to continue.
-	OpenStream(*StreamOpenRequest, grpc.ServerStreamingServer[BatchResponse]) error
-	// Ack acknowledges processed batches and updates the flow control window.
-	// Plugin MUST resume streaming after receiving ACK.
+	// Open a streaming batch channel
+	OpenStream(*StreamOpenRequest, grpc.ServerStreamingServer[Batch]) error
+	// Acknowledge processed batches & update window
 	Ack(context.Context, *AckRequest) (*AckResponse, error)
-	// CloseSession terminates the session and releases resources.
+	// Close the session
 	CloseSession(context.Context, *SessionCloseRequest) (*Empty, error)
 	mustEmbedUnimplementedSourcePluginServer()
 }
@@ -133,7 +121,7 @@ type UnimplementedSourcePluginServer struct{}
 func (UnimplementedSourcePluginServer) CreateSession(context.Context, *SessionCreateRequest) (*SessionCreateResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateSession not implemented")
 }
-func (UnimplementedSourcePluginServer) OpenStream(*StreamOpenRequest, grpc.ServerStreamingServer[BatchResponse]) error {
+func (UnimplementedSourcePluginServer) OpenStream(*StreamOpenRequest, grpc.ServerStreamingServer[Batch]) error {
 	return status.Error(codes.Unimplemented, "method OpenStream not implemented")
 }
 func (UnimplementedSourcePluginServer) Ack(context.Context, *AckRequest) (*AckResponse, error) {
@@ -186,11 +174,11 @@ func _SourcePlugin_OpenStream_Handler(srv interface{}, stream grpc.ServerStream)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(SourcePluginServer).OpenStream(m, &grpc.GenericServerStream[StreamOpenRequest, BatchResponse]{ServerStream: stream})
+	return srv.(SourcePluginServer).OpenStream(m, &grpc.GenericServerStream[StreamOpenRequest, Batch]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type SourcePlugin_OpenStreamServer = grpc.ServerStreamingServer[BatchResponse]
+type SourcePlugin_OpenStreamServer = grpc.ServerStreamingServer[Batch]
 
 func _SourcePlugin_Ack_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AckRequest)
@@ -232,7 +220,7 @@ func _SourcePlugin_CloseSession_Handler(srv interface{}, ctx context.Context, de
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var SourcePlugin_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "planx.v1.SourcePlugin",
+	ServiceName: "planx.plugin.v4.SourcePlugin",
 	HandlerType: (*SourcePluginServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -255,5 +243,5 @@ var SourcePlugin_ServiceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 	},
-	Metadata: "planx/v1/source.proto",
+	Metadata: "source.proto",
 }

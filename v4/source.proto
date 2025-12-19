@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package planx.plugin.v4;
+
+option go_package = "github.com/planx-lab/planx-proto/gen/go/planx/plugin/v4;pluginv4";
+
+import "common.proto";
+
+// ----------------------------
+// Source Plugin Service
+// ----------------------------
+
+service SourcePlugin {
+
+  // Create a new logical session
+  rpc CreateSession(SessionCreateRequest)
+      returns (SessionCreateResponse);
+
+  // Open a streaming batch channel
+  rpc OpenStream(StreamOpenRequest)
+      returns (stream Batch);
+
+  // Acknowledge processed batches & update window
+  rpc Ack(AckRequest)
+      returns (AckResponse);
+
+  // Close the session
+  rpc CloseSession(SessionCloseRequest)
+      returns (Empty);
+}

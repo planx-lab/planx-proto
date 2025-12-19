@@ -1,0 +1,61 @@
+# planx-proto repo.lock
+# Planx 4.0 Plugin Protocol – Source of Truth
+
+VERSION: 4.0
+STATUS: ARCHITECTURE-FROZEN
+
+----------------------------------------
+ROLE
+----------------------------------------
+
+planx-proto defines the ONLY authoritative
+Plugin Protocol for Planx 4.0.
+
+This repository contains:
+- gRPC service definitions
+- Message schemas
+- Protocol-level semantics
+
+It contains NO:
+- Runtime logic
+- SDK helpers
+- Engine behavior
+- Plugin business logic
+
+----------------------------------------
+IMPORT POLICY
+----------------------------------------
+
+ALLOWED IMPORTERS:
+- planx-engine
+- planx-sdk-*
+- planx-plugin-*
+
+FORBIDDEN IMPORTERS:
+- planx-common (no infra dependency)
+- Any non-Planx repository
+
+----------------------------------------
+MODIFICATION RULES
+----------------------------------------
+
+1. Backward compatibility is NOT required before v4.0 GA.
+2. Any change MUST be explicitly versioned (v4 only).
+3. No experimental or optional fields.
+4. No engine- or sdk-specific assumptions.
+
+----------------------------------------
+AI RULES
+----------------------------------------
+
+AI MUST NOT:
+- Redesign protocol semantics
+- Merge services
+- Introduce helper messages for convenience
+- Add fields without explicit justification
+
+AI MAY:
+- Generate code from existing proto
+- Add comments for clarification ONLY
+
+----------------------------
