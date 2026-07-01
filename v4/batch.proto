@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package planx.plugin.v4;
+
+option go_package = "github.com/planx-lab/planx-proto/gen/go/planx/plugin/v4;pluginv4";
+
+// Batch carries one unit of data. Payload is opaque and codec-defined;
+// the Engine never inspects it. Lineage is optional runtime metadata
+// (BatchID etc., frozen in ADR-005); left as opaque bytes here so the
+// discovery protocol does not depend on runtime internals.
+message Batch {
+  bytes payload = 1;
+  bytes lineage = 2;  // optional, opaque runtime lineage (ADR-005)
+}

@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package planx.plugin.v4;
+
+option go_package = "github.com/planx-lab/planx-proto/gen/go/planx/plugin/v4;pluginv4";
+
+// ConfigSchema declares the shape of a Component's config. It is a
+// declaration-time object: Designer renders a form from it; Engine never
+// interprets config bytes at runtime. Semantics mirror a JSON-Schema subset.
+// Nesting is UNLIMITED in the protocol (ADR-010); Designer support is phased.
+message ConfigSchema {
+  repeated ConfigField fields = 1;
+}
+
+// FieldType is the value type of a config field. SECRET is first-class so
+// Designer masks it and Engine/Plugin never log it.
+enum FieldType {
+  FIELD_TYPE_UNSPECIFIED = 0;
+  FIELD_TYPE_STRING = 1;
+  FIELD_TYPE_INTEGER = 2;
+  FIELD_TYPE_NUMBER = 3;
+  FIELD_TYPE_BOOLEAN = 4;
+  FIELD_TYPE_SECRET = 5;
+  FIELD_TYPE_ENUM = 6;
+  FIELD_TYPE_OBJECT = 7;
+  FIELD_TYPE_ARRAY = 8;
+}
+
+message ConfigField {
+  string name = 1;
+  FieldType type = 2;
+  string label = 3;
+  string description = 4;
+  bool required = 5;
+  ConfigValue default = 6;
+  repeated string enum_values = 7;       // populated when type == ENUM
+  string placeholder = 8;
+  string example = 9;
+  repeated ConfigField properties = 10;  // nested fields (OBJECT / ARRAY item shape)
+  FieldValidation validation = 11;
+}
+
+// FieldValidation captures simple scalar/range constraints.
+message FieldValidation {
+  optional int64 min = 1;
+  optional int64 max = 2;
+  optional string pattern = 3;           // regex
+  optional int64 min_length = 4;
+  optional int64 max_length = 5;
+}
+
+// ConfigValue is a typed scalar used for field defaults (oneof).
+message ConfigValue {
+  oneof kind {
+    string string_value = 1;
+    int64 int_value = 2;
+    double double_value = 3;
+    bool bool_value = 4;
+  }
+}

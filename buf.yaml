@@ -5,6 +5,11 @@ modules:
 lint:
   use:
     - STANDARD
+  except:
+    - PACKAGE_DIRECTORY_MATCH       # module rooted at v4/, not planx/plugin/v4/
+    - RPC_REQUEST_RESPONSE_UNIQUE   # domain types (Empty/Batch) intentionally reused across RPCs
+    - RPC_REQUEST_STANDARD_NAME     # domain-typed requests (Empty, Batch) over XRequest wrappers
+    - RPC_RESPONSE_STANDARD_NAME    # domain-typed responses (PluginDescriptor, Batch) over XResponse wrappers
 breaking:
   use:
     - FILE

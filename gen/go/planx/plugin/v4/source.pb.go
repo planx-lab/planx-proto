@@ -10,6 +10,7 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
+	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -20,39 +21,96 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// StreamOpenRequest opens a server-streaming read for an already-created
+// Source session. A clean stream end (plugin returns / gRPC closes) is the
+// exhaustion signal; the Engine maps it to CodeEOF -> pipeline SUCCEEDED.
+type StreamOpenRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	SessionId     string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
+	InitialWindow int32                  `protobuf:"varint,2,opt,name=initial_window,json=initialWindow,proto3" json:"initial_window,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StreamOpenRequest) Reset() {
+	*x = StreamOpenRequest{}
+	mi := &file_source_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StreamOpenRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StreamOpenRequest) ProtoMessage() {}
+
+func (x *StreamOpenRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_source_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StreamOpenRequest.ProtoReflect.Descriptor instead.
+func (*StreamOpenRequest) Descriptor() ([]byte, []int) {
+	return file_source_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *StreamOpenRequest) GetSessionId() string {
+	if x != nil {
+		return x.SessionId
+	}
+	return ""
+}
+
+func (x *StreamOpenRequest) GetInitialWindow() int32 {
+	if x != nil {
+		return x.InitialWindow
+	}
+	return 0
+}
+
 var File_source_proto protoreflect.FileDescriptor
 
 const file_source_proto_rawDesc = "" +
 	"\n" +
-	"\fsource.proto\x12\x0fplanx.plugin.v4\x1a\fcommon.proto2\xca\x02\n" +
-	"\fSourcePlugin\x12^\n" +
-	"\rCreateSession\x12%.planx.plugin.v4.SessionCreateRequest\x1a&.planx.plugin.v4.SessionCreateResponse\x12J\n" +
+	"\fsource.proto\x12\x0fplanx.plugin.v4\x1a\vbatch.proto\"Y\n" +
+	"\x11StreamOpenRequest\x12\x1d\n" +
 	"\n" +
-	"OpenStream\x12\".planx.plugin.v4.StreamOpenRequest\x1a\x16.planx.plugin.v4.Batch0\x01\x12@\n" +
-	"\x03Ack\x12\x1b.planx.plugin.v4.AckRequest\x1a\x1c.planx.plugin.v4.AckResponse\x12L\n" +
-	"\fCloseSession\x12$.planx.plugin.v4.SessionCloseRequest\x1a\x16.planx.plugin.v4.EmptyBBZ@github.com/planx-lab/planx-proto/gen/go/planx/plugin/v4;pluginv4b\x06proto3"
+	"session_id\x18\x01 \x01(\tR\tsessionId\x12%\n" +
+	"\x0einitial_window\x18\x02 \x01(\x05R\rinitialWindow2[\n" +
+	"\rSourceService\x12J\n" +
+	"\n" +
+	"OpenStream\x12\".planx.plugin.v4.StreamOpenRequest\x1a\x16.planx.plugin.v4.Batch0\x01BBZ@github.com/planx-lab/planx-proto/gen/go/planx/plugin/v4;pluginv4b\x06proto3"
 
+var (
+	file_source_proto_rawDescOnce sync.Once
+	file_source_proto_rawDescData []byte
+)
+
+func file_source_proto_rawDescGZIP() []byte {
+	file_source_proto_rawDescOnce.Do(func() {
+		file_source_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_source_proto_rawDesc), len(file_source_proto_rawDesc)))
+	})
+	return file_source_proto_rawDescData
+}
+
+var file_source_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_source_proto_goTypes = []any{
-	(*SessionCreateRequest)(nil),  // 0: planx.plugin.v4.SessionCreateRequest
-	(*StreamOpenRequest)(nil),     // 1: planx.plugin.v4.StreamOpenRequest
-	(*AckRequest)(nil),            // 2: planx.plugin.v4.AckRequest
-	(*SessionCloseRequest)(nil),   // 3: planx.plugin.v4.SessionCloseRequest
-	(*SessionCreateResponse)(nil), // 4: planx.plugin.v4.SessionCreateResponse
-	(*Batch)(nil),                 // 5: planx.plugin.v4.Batch
-	(*AckResponse)(nil),           // 6: planx.plugin.v4.AckResponse
-	(*Empty)(nil),                 // 7: planx.plugin.v4.Empty
+	(*StreamOpenRequest)(nil), // 0: planx.plugin.v4.StreamOpenRequest
+	(*Batch)(nil),             // 1: planx.plugin.v4.Batch
 }
 var file_source_proto_depIdxs = []int32{
-	0, // 0: planx.plugin.v4.SourcePlugin.CreateSession:input_type -> planx.plugin.v4.SessionCreateRequest
-	1, // 1: planx.plugin.v4.SourcePlugin.OpenStream:input_type -> planx.plugin.v4.StreamOpenRequest
-	2, // 2: planx.plugin.v4.SourcePlugin.Ack:input_type -> planx.plugin.v4.AckRequest
-	3, // 3: planx.plugin.v4.SourcePlugin.CloseSession:input_type -> planx.plugin.v4.SessionCloseRequest
-	4, // 4: planx.plugin.v4.SourcePlugin.CreateSession:output_type -> planx.plugin.v4.SessionCreateResponse
-	5, // 5: planx.plugin.v4.SourcePlugin.OpenStream:output_type -> planx.plugin.v4.Batch
-	6, // 6: planx.plugin.v4.SourcePlugin.Ack:output_type -> planx.plugin.v4.AckResponse
-	7, // 7: planx.plugin.v4.SourcePlugin.CloseSession:output_type -> planx.plugin.v4.Empty
-	4, // [4:8] is the sub-list for method output_type
-	0, // [0:4] is the sub-list for method input_type
+	0, // 0: planx.plugin.v4.SourceService.OpenStream:input_type -> planx.plugin.v4.StreamOpenRequest
+	1, // 1: planx.plugin.v4.SourceService.OpenStream:output_type -> planx.plugin.v4.Batch
+	1, // [1:2] is the sub-list for method output_type
+	0, // [0:1] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -63,19 +121,20 @@ func file_source_proto_init() {
 	if File_source_proto != nil {
 		return
 	}
-	file_common_proto_init()
+	file_batch_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_source_proto_rawDesc), len(file_source_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   0,
+			NumMessages:   1,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_source_proto_goTypes,
 		DependencyIndexes: file_source_proto_depIdxs,
+		MessageInfos:      file_source_proto_msgTypes,
 	}.Build()
 	File_source_proto = out.File
 	file_source_proto_goTypes = nil

@@ -4,20 +4,12 @@ package planx.plugin.v4;
 
 option go_package = "github.com/planx-lab/planx-proto/gen/go/planx/plugin/v4;pluginv4";
 
-import "common.proto";
+import "batch.proto";
+import "session.proto";
 
-// ----------------------------
-// Sink Plugin Service
-// ----------------------------
-
-service SinkPlugin {
-
-  rpc CreateSession(SessionCreateRequest)
-      returns (SessionCreateResponse);
-
-  rpc WriteBatch(Batch)
-      returns (AckResponse);
-
-  rpc CloseSession(SessionCloseRequest)
-      returns (Empty);
+// SinkService is implemented by any Plugin exposing a SINK component.
+// WriteBatch acknowledges per batch (session-scoped). The session id travels
+// in gRPC metadata (x-planx-session-id). Session lifecycle lives in SessionService.
+service SinkService {
+  rpc WriteBatch(Batch) returns (AckResponse);
 }

@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package planx.plugin.v4;
+
+option go_package = "github.com/planx-lab/planx-proto/gen/go/planx/plugin/v4;pluginv4";
+
+// SessionCreateRequest binds a session to one Component and applies config.
+// config is opaque bytes, already Designer/schema-validated; the Plugin
+// remains the runtime authority and re-validates here.
+message SessionCreateRequest {
+  string component_id = 1;
+  bytes config = 2;
+}
+
+message SessionCreateResponse {
+  string session_id = 1;
+}
+
+message SessionCloseRequest {
+  string session_id = 1;
+}
+
+message SessionCloseResponse {}
+
+// AckRequest is session-scoped flow control (backpressure). Today used by
+// Source streams; kept general so future windowed processors/sinks reuse it.
+message AckRequest {
+  string session_id = 1;
+  int32 processed = 2;
+  int32 new_window = 3;
+}
+
+message AckResponse {}
+
+// SessionService owns the stateful boundary + flow control. Every Plugin
+// implements it; kind-specific execution lives in Source/Processor/SinkService.
+service SessionService {
+  rpc CreateSession(SessionCreateRequest) returns (SessionCreateResponse);
+  rpc CloseSession(SessionCloseRequest) returns (SessionCloseResponse);
+  rpc Ack(AckRequest) returns (AckResponse);
+}

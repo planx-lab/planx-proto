@@ -25,31 +25,20 @@ var File_sink_proto protoreflect.FileDescriptor
 const file_sink_proto_rawDesc = "" +
 	"\n" +
 	"\n" +
-	"sink.proto\x12\x0fplanx.plugin.v4\x1a\fcommon.proto2\xfe\x01\n" +
+	"sink.proto\x12\x0fplanx.plugin.v4\x1a\vbatch.proto\x1a\rsession.proto2Q\n" +
+	"\vSinkService\x12B\n" +
 	"\n" +
-	"SinkPlugin\x12^\n" +
-	"\rCreateSession\x12%.planx.plugin.v4.SessionCreateRequest\x1a&.planx.plugin.v4.SessionCreateResponse\x12B\n" +
-	"\n" +
-	"WriteBatch\x12\x16.planx.plugin.v4.Batch\x1a\x1c.planx.plugin.v4.AckResponse\x12L\n" +
-	"\fCloseSession\x12$.planx.plugin.v4.SessionCloseRequest\x1a\x16.planx.plugin.v4.EmptyBBZ@github.com/planx-lab/planx-proto/gen/go/planx/plugin/v4;pluginv4b\x06proto3"
+	"WriteBatch\x12\x16.planx.plugin.v4.Batch\x1a\x1c.planx.plugin.v4.AckResponseBBZ@github.com/planx-lab/planx-proto/gen/go/planx/plugin/v4;pluginv4b\x06proto3"
 
 var file_sink_proto_goTypes = []any{
-	(*SessionCreateRequest)(nil),  // 0: planx.plugin.v4.SessionCreateRequest
-	(*Batch)(nil),                 // 1: planx.plugin.v4.Batch
-	(*SessionCloseRequest)(nil),   // 2: planx.plugin.v4.SessionCloseRequest
-	(*SessionCreateResponse)(nil), // 3: planx.plugin.v4.SessionCreateResponse
-	(*AckResponse)(nil),           // 4: planx.plugin.v4.AckResponse
-	(*Empty)(nil),                 // 5: planx.plugin.v4.Empty
+	(*Batch)(nil),       // 0: planx.plugin.v4.Batch
+	(*AckResponse)(nil), // 1: planx.plugin.v4.AckResponse
 }
 var file_sink_proto_depIdxs = []int32{
-	0, // 0: planx.plugin.v4.SinkPlugin.CreateSession:input_type -> planx.plugin.v4.SessionCreateRequest
-	1, // 1: planx.plugin.v4.SinkPlugin.WriteBatch:input_type -> planx.plugin.v4.Batch
-	2, // 2: planx.plugin.v4.SinkPlugin.CloseSession:input_type -> planx.plugin.v4.SessionCloseRequest
-	3, // 3: planx.plugin.v4.SinkPlugin.CreateSession:output_type -> planx.plugin.v4.SessionCreateResponse
-	4, // 4: planx.plugin.v4.SinkPlugin.WriteBatch:output_type -> planx.plugin.v4.AckResponse
-	5, // 5: planx.plugin.v4.SinkPlugin.CloseSession:output_type -> planx.plugin.v4.Empty
-	3, // [3:6] is the sub-list for method output_type
-	0, // [0:3] is the sub-list for method input_type
+	0, // 0: planx.plugin.v4.SinkService.WriteBatch:input_type -> planx.plugin.v4.Batch
+	1, // 1: planx.plugin.v4.SinkService.WriteBatch:output_type -> planx.plugin.v4.AckResponse
+	1, // [1:2] is the sub-list for method output_type
+	0, // [0:1] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -60,7 +49,8 @@ func file_sink_proto_init() {
 	if File_sink_proto != nil {
 		return
 	}
-	file_common_proto_init()
+	file_batch_proto_init()
+	file_session_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

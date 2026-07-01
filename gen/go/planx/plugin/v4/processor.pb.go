@@ -24,28 +24,18 @@ var File_processor_proto protoreflect.FileDescriptor
 
 const file_processor_proto_rawDesc = "" +
 	"\n" +
-	"\x0fprocessor.proto\x12\x0fplanx.plugin.v4\x1a\fcommon.proto2\xfa\x01\n" +
-	"\x0fProcessorPlugin\x12^\n" +
-	"\rCreateSession\x12%.planx.plugin.v4.SessionCreateRequest\x1a&.planx.plugin.v4.SessionCreateResponse\x129\n" +
-	"\aProcess\x12\x16.planx.plugin.v4.Batch\x1a\x16.planx.plugin.v4.Batch\x12L\n" +
-	"\fCloseSession\x12$.planx.plugin.v4.SessionCloseRequest\x1a\x16.planx.plugin.v4.EmptyBBZ@github.com/planx-lab/planx-proto/gen/go/planx/plugin/v4;pluginv4b\x06proto3"
+	"\x0fprocessor.proto\x12\x0fplanx.plugin.v4\x1a\vbatch.proto2M\n" +
+	"\x10ProcessorService\x129\n" +
+	"\aProcess\x12\x16.planx.plugin.v4.Batch\x1a\x16.planx.plugin.v4.BatchBBZ@github.com/planx-lab/planx-proto/gen/go/planx/plugin/v4;pluginv4b\x06proto3"
 
 var file_processor_proto_goTypes = []any{
-	(*SessionCreateRequest)(nil),  // 0: planx.plugin.v4.SessionCreateRequest
-	(*Batch)(nil),                 // 1: planx.plugin.v4.Batch
-	(*SessionCloseRequest)(nil),   // 2: planx.plugin.v4.SessionCloseRequest
-	(*SessionCreateResponse)(nil), // 3: planx.plugin.v4.SessionCreateResponse
-	(*Empty)(nil),                 // 4: planx.plugin.v4.Empty
+	(*Batch)(nil), // 0: planx.plugin.v4.Batch
 }
 var file_processor_proto_depIdxs = []int32{
-	0, // 0: planx.plugin.v4.ProcessorPlugin.CreateSession:input_type -> planx.plugin.v4.SessionCreateRequest
-	1, // 1: planx.plugin.v4.ProcessorPlugin.Process:input_type -> planx.plugin.v4.Batch
-	2, // 2: planx.plugin.v4.ProcessorPlugin.CloseSession:input_type -> planx.plugin.v4.SessionCloseRequest
-	3, // 3: planx.plugin.v4.ProcessorPlugin.CreateSession:output_type -> planx.plugin.v4.SessionCreateResponse
-	1, // 4: planx.plugin.v4.ProcessorPlugin.Process:output_type -> planx.plugin.v4.Batch
-	4, // 5: planx.plugin.v4.ProcessorPlugin.CloseSession:output_type -> planx.plugin.v4.Empty
-	3, // [3:6] is the sub-list for method output_type
-	0, // [0:3] is the sub-list for method input_type
+	0, // 0: planx.plugin.v4.ProcessorService.Process:input_type -> planx.plugin.v4.Batch
+	0, // 1: planx.plugin.v4.ProcessorService.Process:output_type -> planx.plugin.v4.Batch
+	1, // [1:2] is the sub-list for method output_type
+	0, // [0:1] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -56,7 +46,7 @@ func file_processor_proto_init() {
 	if File_processor_proto != nil {
 		return
 	}
-	file_common_proto_init()
+	file_batch_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

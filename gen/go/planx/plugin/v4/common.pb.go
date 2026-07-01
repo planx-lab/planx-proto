@@ -21,6 +21,166 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// ComponentKind identifies the runtime role of a Component within a Plugin.
+type ComponentKind int32
+
+const (
+	ComponentKind_COMPONENT_KIND_UNSPECIFIED ComponentKind = 0
+	ComponentKind_COMPONENT_KIND_SOURCE      ComponentKind = 1
+	ComponentKind_COMPONENT_KIND_PROCESSOR   ComponentKind = 2
+	ComponentKind_COMPONENT_KIND_SINK        ComponentKind = 3
+)
+
+// Enum value maps for ComponentKind.
+var (
+	ComponentKind_name = map[int32]string{
+		0: "COMPONENT_KIND_UNSPECIFIED",
+		1: "COMPONENT_KIND_SOURCE",
+		2: "COMPONENT_KIND_PROCESSOR",
+		3: "COMPONENT_KIND_SINK",
+	}
+	ComponentKind_value = map[string]int32{
+		"COMPONENT_KIND_UNSPECIFIED": 0,
+		"COMPONENT_KIND_SOURCE":      1,
+		"COMPONENT_KIND_PROCESSOR":   2,
+		"COMPONENT_KIND_SINK":        3,
+	}
+)
+
+func (x ComponentKind) Enum() *ComponentKind {
+	p := new(ComponentKind)
+	*p = x
+	return p
+}
+
+func (x ComponentKind) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ComponentKind) Descriptor() protoreflect.EnumDescriptor {
+	return file_common_proto_enumTypes[0].Descriptor()
+}
+
+func (ComponentKind) Type() protoreflect.EnumType {
+	return &file_common_proto_enumTypes[0]
+}
+
+func (x ComponentKind) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ComponentKind.Descriptor instead.
+func (ComponentKind) EnumDescriptor() ([]byte, []int) {
+	return file_common_proto_rawDescGZIP(), []int{0}
+}
+
+// DeliverySemantics declares the plugin's delivery guarantee.
+type DeliverySemantics int32
+
+const (
+	DeliverySemantics_DELIVERY_SEMANTICS_UNSPECIFIED   DeliverySemantics = 0
+	DeliverySemantics_DELIVERY_SEMANTICS_AT_LEAST_ONCE DeliverySemantics = 1
+	DeliverySemantics_DELIVERY_SEMANTICS_AT_MOST_ONCE  DeliverySemantics = 2
+	DeliverySemantics_DELIVERY_SEMANTICS_EXACTLY_ONCE  DeliverySemantics = 3
+)
+
+// Enum value maps for DeliverySemantics.
+var (
+	DeliverySemantics_name = map[int32]string{
+		0: "DELIVERY_SEMANTICS_UNSPECIFIED",
+		1: "DELIVERY_SEMANTICS_AT_LEAST_ONCE",
+		2: "DELIVERY_SEMANTICS_AT_MOST_ONCE",
+		3: "DELIVERY_SEMANTICS_EXACTLY_ONCE",
+	}
+	DeliverySemantics_value = map[string]int32{
+		"DELIVERY_SEMANTICS_UNSPECIFIED":   0,
+		"DELIVERY_SEMANTICS_AT_LEAST_ONCE": 1,
+		"DELIVERY_SEMANTICS_AT_MOST_ONCE":  2,
+		"DELIVERY_SEMANTICS_EXACTLY_ONCE":  3,
+	}
+)
+
+func (x DeliverySemantics) Enum() *DeliverySemantics {
+	p := new(DeliverySemantics)
+	*p = x
+	return p
+}
+
+func (x DeliverySemantics) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (DeliverySemantics) Descriptor() protoreflect.EnumDescriptor {
+	return file_common_proto_enumTypes[1].Descriptor()
+}
+
+func (DeliverySemantics) Type() protoreflect.EnumType {
+	return &file_common_proto_enumTypes[1]
+}
+
+func (x DeliverySemantics) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use DeliverySemantics.Descriptor instead.
+func (DeliverySemantics) EnumDescriptor() ([]byte, []int) {
+	return file_common_proto_rawDescGZIP(), []int{1}
+}
+
+// Maturity declares the publication status of a Component.
+type Maturity int32
+
+const (
+	Maturity_MATURITY_UNSPECIFIED  Maturity = 0
+	Maturity_MATURITY_STABLE       Maturity = 1
+	Maturity_MATURITY_EXPERIMENTAL Maturity = 2
+	Maturity_MATURITY_DEPRECATED   Maturity = 3
+)
+
+// Enum value maps for Maturity.
+var (
+	Maturity_name = map[int32]string{
+		0: "MATURITY_UNSPECIFIED",
+		1: "MATURITY_STABLE",
+		2: "MATURITY_EXPERIMENTAL",
+		3: "MATURITY_DEPRECATED",
+	}
+	Maturity_value = map[string]int32{
+		"MATURITY_UNSPECIFIED":  0,
+		"MATURITY_STABLE":       1,
+		"MATURITY_EXPERIMENTAL": 2,
+		"MATURITY_DEPRECATED":   3,
+	}
+)
+
+func (x Maturity) Enum() *Maturity {
+	p := new(Maturity)
+	*p = x
+	return p
+}
+
+func (x Maturity) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Maturity) Descriptor() protoreflect.EnumDescriptor {
+	return file_common_proto_enumTypes[2].Descriptor()
+}
+
+func (Maturity) Type() protoreflect.EnumType {
+	return &file_common_proto_enumTypes[2]
+}
+
+func (x Maturity) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Maturity.Descriptor instead.
+func (Maturity) EnumDescriptor() ([]byte, []int) {
+	return file_common_proto_rawDescGZIP(), []int{2}
+}
+
+// Empty is the no-argument / no-return placeholder.
 type Empty struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -57,367 +217,27 @@ func (*Empty) Descriptor() ([]byte, []int) {
 	return file_common_proto_rawDescGZIP(), []int{0}
 }
 
-type SessionCreateRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      string                 `protobuf:"bytes,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Config        []byte                 `protobuf:"bytes,2,opt,name=config,proto3" json:"config,omitempty"` // opaque plugin config
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SessionCreateRequest) Reset() {
-	*x = SessionCreateRequest{}
-	mi := &file_common_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SessionCreateRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SessionCreateRequest) ProtoMessage() {}
-
-func (x *SessionCreateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_common_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SessionCreateRequest.ProtoReflect.Descriptor instead.
-func (*SessionCreateRequest) Descriptor() ([]byte, []int) {
-	return file_common_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *SessionCreateRequest) GetTenantId() string {
-	if x != nil {
-		return x.TenantId
-	}
-	return ""
-}
-
-func (x *SessionCreateRequest) GetConfig() []byte {
-	if x != nil {
-		return x.Config
-	}
-	return nil
-}
-
-type SessionCreateResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	SessionId     string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SessionCreateResponse) Reset() {
-	*x = SessionCreateResponse{}
-	mi := &file_common_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SessionCreateResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SessionCreateResponse) ProtoMessage() {}
-
-func (x *SessionCreateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_common_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SessionCreateResponse.ProtoReflect.Descriptor instead.
-func (*SessionCreateResponse) Descriptor() ([]byte, []int) {
-	return file_common_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *SessionCreateResponse) GetSessionId() string {
-	if x != nil {
-		return x.SessionId
-	}
-	return ""
-}
-
-type SessionCloseRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	SessionId     string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SessionCloseRequest) Reset() {
-	*x = SessionCloseRequest{}
-	mi := &file_common_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SessionCloseRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SessionCloseRequest) ProtoMessage() {}
-
-func (x *SessionCloseRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_common_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SessionCloseRequest.ProtoReflect.Descriptor instead.
-func (*SessionCloseRequest) Descriptor() ([]byte, []int) {
-	return file_common_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *SessionCloseRequest) GetSessionId() string {
-	if x != nil {
-		return x.SessionId
-	}
-	return ""
-}
-
-type StreamOpenRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	SessionId     string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
-	InitialWindow int32                  `protobuf:"varint,2,opt,name=initial_window,json=initialWindow,proto3" json:"initial_window,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *StreamOpenRequest) Reset() {
-	*x = StreamOpenRequest{}
-	mi := &file_common_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *StreamOpenRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*StreamOpenRequest) ProtoMessage() {}
-
-func (x *StreamOpenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_common_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use StreamOpenRequest.ProtoReflect.Descriptor instead.
-func (*StreamOpenRequest) Descriptor() ([]byte, []int) {
-	return file_common_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *StreamOpenRequest) GetSessionId() string {
-	if x != nil {
-		return x.SessionId
-	}
-	return ""
-}
-
-func (x *StreamOpenRequest) GetInitialWindow() int32 {
-	if x != nil {
-		return x.InitialWindow
-	}
-	return 0
-}
-
-type AckRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	SessionId     string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
-	Processed     int32                  `protobuf:"varint,2,opt,name=processed,proto3" json:"processed,omitempty"`
-	NewWindow     int32                  `protobuf:"varint,3,opt,name=new_window,json=newWindow,proto3" json:"new_window,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *AckRequest) Reset() {
-	*x = AckRequest{}
-	mi := &file_common_proto_msgTypes[5]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *AckRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*AckRequest) ProtoMessage() {}
-
-func (x *AckRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_common_proto_msgTypes[5]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use AckRequest.ProtoReflect.Descriptor instead.
-func (*AckRequest) Descriptor() ([]byte, []int) {
-	return file_common_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *AckRequest) GetSessionId() string {
-	if x != nil {
-		return x.SessionId
-	}
-	return ""
-}
-
-func (x *AckRequest) GetProcessed() int32 {
-	if x != nil {
-		return x.Processed
-	}
-	return 0
-}
-
-func (x *AckRequest) GetNewWindow() int32 {
-	if x != nil {
-		return x.NewWindow
-	}
-	return 0
-}
-
-type AckResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *AckResponse) Reset() {
-	*x = AckResponse{}
-	mi := &file_common_proto_msgTypes[6]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *AckResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*AckResponse) ProtoMessage() {}
-
-func (x *AckResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_common_proto_msgTypes[6]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use AckResponse.ProtoReflect.Descriptor instead.
-func (*AckResponse) Descriptor() ([]byte, []int) {
-	return file_common_proto_rawDescGZIP(), []int{6}
-}
-
-type Batch struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Payload       []byte                 `protobuf:"bytes,1,opt,name=payload,proto3" json:"payload,omitempty"` // opaque, codec-defined
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Batch) Reset() {
-	*x = Batch{}
-	mi := &file_common_proto_msgTypes[7]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Batch) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Batch) ProtoMessage() {}
-
-func (x *Batch) ProtoReflect() protoreflect.Message {
-	mi := &file_common_proto_msgTypes[7]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Batch.ProtoReflect.Descriptor instead.
-func (*Batch) Descriptor() ([]byte, []int) {
-	return file_common_proto_rawDescGZIP(), []int{7}
-}
-
-func (x *Batch) GetPayload() []byte {
-	if x != nil {
-		return x.Payload
-	}
-	return nil
-}
-
 var File_common_proto protoreflect.FileDescriptor
 
 const file_common_proto_rawDesc = "" +
 	"\n" +
 	"\fcommon.proto\x12\x0fplanx.plugin.v4\"\a\n" +
-	"\x05Empty\"K\n" +
-	"\x14SessionCreateRequest\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\tR\btenantId\x12\x16\n" +
-	"\x06config\x18\x02 \x01(\fR\x06config\"6\n" +
-	"\x15SessionCreateResponse\x12\x1d\n" +
-	"\n" +
-	"session_id\x18\x01 \x01(\tR\tsessionId\"4\n" +
-	"\x13SessionCloseRequest\x12\x1d\n" +
-	"\n" +
-	"session_id\x18\x01 \x01(\tR\tsessionId\"Y\n" +
-	"\x11StreamOpenRequest\x12\x1d\n" +
-	"\n" +
-	"session_id\x18\x01 \x01(\tR\tsessionId\x12%\n" +
-	"\x0einitial_window\x18\x02 \x01(\x05R\rinitialWindow\"h\n" +
-	"\n" +
-	"AckRequest\x12\x1d\n" +
-	"\n" +
-	"session_id\x18\x01 \x01(\tR\tsessionId\x12\x1c\n" +
-	"\tprocessed\x18\x02 \x01(\x05R\tprocessed\x12\x1d\n" +
-	"\n" +
-	"new_window\x18\x03 \x01(\x05R\tnewWindow\"\r\n" +
-	"\vAckResponse\"!\n" +
-	"\x05Batch\x12\x18\n" +
-	"\apayload\x18\x01 \x01(\fR\apayloadBBZ@github.com/planx-lab/planx-proto/gen/go/planx/plugin/v4;pluginv4b\x06proto3"
+	"\x05Empty*\x81\x01\n" +
+	"\rComponentKind\x12\x1e\n" +
+	"\x1aCOMPONENT_KIND_UNSPECIFIED\x10\x00\x12\x19\n" +
+	"\x15COMPONENT_KIND_SOURCE\x10\x01\x12\x1c\n" +
+	"\x18COMPONENT_KIND_PROCESSOR\x10\x02\x12\x17\n" +
+	"\x13COMPONENT_KIND_SINK\x10\x03*\xa7\x01\n" +
+	"\x11DeliverySemantics\x12\"\n" +
+	"\x1eDELIVERY_SEMANTICS_UNSPECIFIED\x10\x00\x12$\n" +
+	" DELIVERY_SEMANTICS_AT_LEAST_ONCE\x10\x01\x12#\n" +
+	"\x1fDELIVERY_SEMANTICS_AT_MOST_ONCE\x10\x02\x12#\n" +
+	"\x1fDELIVERY_SEMANTICS_EXACTLY_ONCE\x10\x03*m\n" +
+	"\bMaturity\x12\x18\n" +
+	"\x14MATURITY_UNSPECIFIED\x10\x00\x12\x13\n" +
+	"\x0fMATURITY_STABLE\x10\x01\x12\x19\n" +
+	"\x15MATURITY_EXPERIMENTAL\x10\x02\x12\x17\n" +
+	"\x13MATURITY_DEPRECATED\x10\x03BBZ@github.com/planx-lab/planx-proto/gen/go/planx/plugin/v4;pluginv4b\x06proto3"
 
 var (
 	file_common_proto_rawDescOnce sync.Once
@@ -431,16 +251,13 @@ func file_common_proto_rawDescGZIP() []byte {
 	return file_common_proto_rawDescData
 }
 
-var file_common_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_common_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
+var file_common_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_common_proto_goTypes = []any{
-	(*Empty)(nil),                 // 0: planx.plugin.v4.Empty
-	(*SessionCreateRequest)(nil),  // 1: planx.plugin.v4.SessionCreateRequest
-	(*SessionCreateResponse)(nil), // 2: planx.plugin.v4.SessionCreateResponse
-	(*SessionCloseRequest)(nil),   // 3: planx.plugin.v4.SessionCloseRequest
-	(*StreamOpenRequest)(nil),     // 4: planx.plugin.v4.StreamOpenRequest
-	(*AckRequest)(nil),            // 5: planx.plugin.v4.AckRequest
-	(*AckResponse)(nil),           // 6: planx.plugin.v4.AckResponse
-	(*Batch)(nil),                 // 7: planx.plugin.v4.Batch
+	(ComponentKind)(0),     // 0: planx.plugin.v4.ComponentKind
+	(DeliverySemantics)(0), // 1: planx.plugin.v4.DeliverySemantics
+	(Maturity)(0),          // 2: planx.plugin.v4.Maturity
+	(*Empty)(nil),          // 3: planx.plugin.v4.Empty
 }
 var file_common_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -460,13 +277,14 @@ func file_common_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_common_proto_rawDesc), len(file_common_proto_rawDesc)),
-			NumEnums:      0,
-			NumMessages:   8,
+			NumEnums:      3,
+			NumMessages:   1,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_common_proto_goTypes,
 		DependencyIndexes: file_common_proto_depIdxs,
+		EnumInfos:         file_common_proto_enumTypes,
 		MessageInfos:      file_common_proto_msgTypes,
 	}.Build()
 	File_common_proto = out.File

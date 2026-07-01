@@ -1,0 +1,115 @@
+syntax = "proto3";
+
+package planx.plugin.v4;
+
+option go_package = "github.com/planx-lab/planx-proto/gen/go/planx/plugin/v4;pluginv4";
+
+import "common.proto";
+import "schema.proto";
+
+// PluginDescriptor is the canonical, self-described identity of a Plugin
+// binary, returned by Discover(). The Plugin is the single source of truth.
+message PluginDescriptor {
+  string id = 1;                       // globally-unique kebab-case, e.g. "mysql"
+  string version = 2;                  // semver of the binary
+  string runtime_version = 3;          // protocol version spoken, e.g. "v4"
+  string sdk_version = 4;              // SDK that built it (diagnostics)
+  string display_name = 5;
+  string description = 6;
+  string vendor = 7;
+  string license = 8;                  // SPDX identifier
+  string homepage = 9;
+  string icon = 10;                    // URL or data URI
+  repeated string keywords = 11;
+  Documentation documentation = 12;
+  repeated ComponentDescriptor components = 13;  // >= 1
+}
+
+// ComponentDescriptor describes one selectable Component within a Plugin.
+message ComponentDescriptor {
+  string id = 1;                       // unique within the plugin, e.g. "source"
+  ComponentKind kind = 2;              // SOURCE | PROCESSOR | SINK
+  string version = 3;                  // component may version independently
+  string display_name = 4;
+  string description = 5;
+  ConfigSchema config_schema = 6;      // may be empty (no config)
+  Capabilities capabilities = 7;
+  ComponentStatus status = 8;          // maturity / visibility
+}
+
+// Capabilities declares what a Component supports. Structured, not free-form.
+// Fields the Engine does not yet implement are ignored (additive, non-breaking).
+message Capabilities {
+  DeliverySemantics delivery = 1;
+  bool streaming = 2;                  // unbounded stream (never EOF)
+  bool bounded = 3;                    // batch source (reaches EOF)
+  bool stateful = 4;
+  bool transactional = 5;
+  bool supports_checkpoint = 6;
+  bool supports_resume = 7;
+  ParallelismSpec parallelism = 8;
+  bool configurable = 9;               // false => Designer shows "No configuration required"
+}
+
+message ParallelismSpec {
+  bool supported = 1;
+  string note = 2;                     // e.g. "partition key required"
+}
+
+// ComponentStatus declares publication status / visibility (Marketplace/Designer).
+message ComponentStatus {
+  Maturity maturity = 1;
+  bool hidden = 2;                     // do not surface by default
+}
+
+// Documentation carries an embedded summary + examples (offline-usable,
+// searchable, AI-ready). Large prose stays external via homepage.
+message Documentation {
+  string summary = 1;
+  string homepage = 2;
+  repeated Example examples = 3;
+}
+
+message Example {
+  string name = 1;
+  string description = 2;
+  bytes config = 3;                    // example config matching the schema
+}
+
+// HealthStatus is returned by Health() (Engine-pulled readiness probe).
+message HealthStatus {
+  enum State {
+    STATE_UNSPECIFIED = 0;
+    STATE_READY = 1;
+    STATE_NOT_READY = 2;
+  }
+  State state = 1;
+  string message = 2;
+}
+
+// ConfigValidationRequest is sent by Designer (via Engine) to ValidateConfig()
+// for a live config check (connectivity, resource existence). The Plugin is
+// authoritative; Engine only forwards.
+message ConfigValidationRequest {
+  string component_id = 1;
+  bytes config = 2;                    // opaque, Designer-validated bytes
+}
+
+message ConfigValidationResult {
+  bool ok = 1;
+  string message = 2;
+  repeated ValidationDetail details = 3;
+}
+
+message ValidationDetail {
+  string key = 1;          // e.g. "latency", "db_version"
+  string value = 2;
+}
+
+// PluginService is the discovery + metadata surface. Every Plugin implements it.
+// Stateless methods, called once at load and cached.
+service PluginService {
+  rpc Discover(Empty) returns (PluginDescriptor);
+  rpc Health(Empty) returns (HealthStatus);
+  rpc ValidateConfig(ConfigValidationRequest) returns (ConfigValidationResult);
+}
