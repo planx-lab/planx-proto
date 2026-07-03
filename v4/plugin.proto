@@ -112,4 +112,26 @@ service PluginService {
   rpc Discover(Empty) returns (PluginDescriptor);
   rpc Health(Empty) returns (HealthStatus);
   rpc ValidateConfig(ConfigValidationRequest) returns (ConfigValidationResult);
+  rpc DiscoverSchema(DiscoverSchemaRequest) returns (DiscoverSchemaResponse) {}; // ADR-013
+}
+
+message DiscoverSchemaRequest {
+  string component_id = 1;
+  bytes config = 2;                    // partial config (connection info, optional table)
+}
+
+message DiscoverSchemaResponse {
+  repeated TableInfo tables = 1;       // populated when config has no table
+  repeated ColumnInfo columns = 2;     // populated when config has a table
+}
+
+message TableInfo {
+  string schema = 1;                   // e.g. "public" (PG) / "dbo" (MSSQL)
+  string name = 2;                     // e.g. "users_src"
+}
+
+message ColumnInfo {
+  string name = 1;
+  string type = 2;                     // DB type name (e.g. "integer", "varchar")
+  bool nullable = 3;
 }

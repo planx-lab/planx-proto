@@ -870,6 +870,222 @@ func (x *ValidationDetail) GetValue() string {
 	return ""
 }
 
+type DiscoverSchemaRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ComponentId   string                 `protobuf:"bytes,1,opt,name=component_id,json=componentId,proto3" json:"component_id,omitempty"`
+	Config        []byte                 `protobuf:"bytes,2,opt,name=config,proto3" json:"config,omitempty"` // partial config (connection info, optional table)
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DiscoverSchemaRequest) Reset() {
+	*x = DiscoverSchemaRequest{}
+	mi := &file_plugin_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DiscoverSchemaRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DiscoverSchemaRequest) ProtoMessage() {}
+
+func (x *DiscoverSchemaRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_plugin_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DiscoverSchemaRequest.ProtoReflect.Descriptor instead.
+func (*DiscoverSchemaRequest) Descriptor() ([]byte, []int) {
+	return file_plugin_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *DiscoverSchemaRequest) GetComponentId() string {
+	if x != nil {
+		return x.ComponentId
+	}
+	return ""
+}
+
+func (x *DiscoverSchemaRequest) GetConfig() []byte {
+	if x != nil {
+		return x.Config
+	}
+	return nil
+}
+
+type DiscoverSchemaResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Tables        []*TableInfo           `protobuf:"bytes,1,rep,name=tables,proto3" json:"tables,omitempty"`   // populated when config has no table
+	Columns       []*ColumnInfo          `protobuf:"bytes,2,rep,name=columns,proto3" json:"columns,omitempty"` // populated when config has a table
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DiscoverSchemaResponse) Reset() {
+	*x = DiscoverSchemaResponse{}
+	mi := &file_plugin_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DiscoverSchemaResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DiscoverSchemaResponse) ProtoMessage() {}
+
+func (x *DiscoverSchemaResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_plugin_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DiscoverSchemaResponse.ProtoReflect.Descriptor instead.
+func (*DiscoverSchemaResponse) Descriptor() ([]byte, []int) {
+	return file_plugin_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *DiscoverSchemaResponse) GetTables() []*TableInfo {
+	if x != nil {
+		return x.Tables
+	}
+	return nil
+}
+
+func (x *DiscoverSchemaResponse) GetColumns() []*ColumnInfo {
+	if x != nil {
+		return x.Columns
+	}
+	return nil
+}
+
+type TableInfo struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Schema        string                 `protobuf:"bytes,1,opt,name=schema,proto3" json:"schema,omitempty"` // e.g. "public" (PG) / "dbo" (MSSQL)
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`     // e.g. "users_src"
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TableInfo) Reset() {
+	*x = TableInfo{}
+	mi := &file_plugin_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TableInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TableInfo) ProtoMessage() {}
+
+func (x *TableInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_plugin_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TableInfo.ProtoReflect.Descriptor instead.
+func (*TableInfo) Descriptor() ([]byte, []int) {
+	return file_plugin_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *TableInfo) GetSchema() string {
+	if x != nil {
+		return x.Schema
+	}
+	return ""
+}
+
+func (x *TableInfo) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+type ColumnInfo struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Type          string                 `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"` // DB type name (e.g. "integer", "varchar")
+	Nullable      bool                   `protobuf:"varint,3,opt,name=nullable,proto3" json:"nullable,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ColumnInfo) Reset() {
+	*x = ColumnInfo{}
+	mi := &file_plugin_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ColumnInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ColumnInfo) ProtoMessage() {}
+
+func (x *ColumnInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_plugin_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ColumnInfo.ProtoReflect.Descriptor instead.
+func (*ColumnInfo) Descriptor() ([]byte, []int) {
+	return file_plugin_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *ColumnInfo) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *ColumnInfo) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *ColumnInfo) GetNullable() bool {
+	if x != nil {
+		return x.Nullable
+	}
+	return false
+}
+
 var File_plugin_proto protoreflect.FileDescriptor
 
 const file_plugin_proto_rawDesc = "" +
@@ -942,11 +1158,26 @@ const file_plugin_proto_rawDesc = "" +
 	"\adetails\x18\x03 \x03(\v2!.planx.plugin.v4.ValidationDetailR\adetails\":\n" +
 	"\x10ValidationDetail\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value2\xfc\x01\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value\"R\n" +
+	"\x15DiscoverSchemaRequest\x12!\n" +
+	"\fcomponent_id\x18\x01 \x01(\tR\vcomponentId\x12\x16\n" +
+	"\x06config\x18\x02 \x01(\fR\x06config\"\x83\x01\n" +
+	"\x16DiscoverSchemaResponse\x122\n" +
+	"\x06tables\x18\x01 \x03(\v2\x1a.planx.plugin.v4.TableInfoR\x06tables\x125\n" +
+	"\acolumns\x18\x02 \x03(\v2\x1b.planx.plugin.v4.ColumnInfoR\acolumns\"7\n" +
+	"\tTableInfo\x12\x16\n" +
+	"\x06schema\x18\x01 \x01(\tR\x06schema\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\"P\n" +
+	"\n" +
+	"ColumnInfo\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
+	"\x04type\x18\x02 \x01(\tR\x04type\x12\x1a\n" +
+	"\bnullable\x18\x03 \x01(\bR\bnullable2\xe1\x02\n" +
 	"\rPluginService\x12E\n" +
 	"\bDiscover\x12\x16.planx.plugin.v4.Empty\x1a!.planx.plugin.v4.PluginDescriptor\x12?\n" +
 	"\x06Health\x12\x16.planx.plugin.v4.Empty\x1a\x1d.planx.plugin.v4.HealthStatus\x12c\n" +
-	"\x0eValidateConfig\x12(.planx.plugin.v4.ConfigValidationRequest\x1a'.planx.plugin.v4.ConfigValidationResultBBZ@github.com/planx-lab/planx-proto/gen/go/planx/plugin/v4;pluginv4b\x06proto3"
+	"\x0eValidateConfig\x12(.planx.plugin.v4.ConfigValidationRequest\x1a'.planx.plugin.v4.ConfigValidationResult\x12c\n" +
+	"\x0eDiscoverSchema\x12&.planx.plugin.v4.DiscoverSchemaRequest\x1a'.planx.plugin.v4.DiscoverSchemaResponse\"\x00BBZ@github.com/planx-lab/planx-proto/gen/go/planx/plugin/v4;pluginv4b\x06proto3"
 
 var (
 	file_plugin_proto_rawDescOnce sync.Once
@@ -961,7 +1192,7 @@ func file_plugin_proto_rawDescGZIP() []byte {
 }
 
 var file_plugin_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_plugin_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_plugin_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_plugin_proto_goTypes = []any{
 	(HealthStatus_State)(0),         // 0: planx.plugin.v4.HealthStatus.State
 	(*PluginDescriptor)(nil),        // 1: planx.plugin.v4.PluginDescriptor
@@ -975,36 +1206,44 @@ var file_plugin_proto_goTypes = []any{
 	(*ConfigValidationRequest)(nil), // 9: planx.plugin.v4.ConfigValidationRequest
 	(*ConfigValidationResult)(nil),  // 10: planx.plugin.v4.ConfigValidationResult
 	(*ValidationDetail)(nil),        // 11: planx.plugin.v4.ValidationDetail
-	(ComponentKind)(0),              // 12: planx.plugin.v4.ComponentKind
-	(*ConfigSchema)(nil),            // 13: planx.plugin.v4.ConfigSchema
-	(DeliverySemantics)(0),          // 14: planx.plugin.v4.DeliverySemantics
-	(Maturity)(0),                   // 15: planx.plugin.v4.Maturity
-	(*Empty)(nil),                   // 16: planx.plugin.v4.Empty
+	(*DiscoverSchemaRequest)(nil),   // 12: planx.plugin.v4.DiscoverSchemaRequest
+	(*DiscoverSchemaResponse)(nil),  // 13: planx.plugin.v4.DiscoverSchemaResponse
+	(*TableInfo)(nil),               // 14: planx.plugin.v4.TableInfo
+	(*ColumnInfo)(nil),              // 15: planx.plugin.v4.ColumnInfo
+	(ComponentKind)(0),              // 16: planx.plugin.v4.ComponentKind
+	(*ConfigSchema)(nil),            // 17: planx.plugin.v4.ConfigSchema
+	(DeliverySemantics)(0),          // 18: planx.plugin.v4.DeliverySemantics
+	(Maturity)(0),                   // 19: planx.plugin.v4.Maturity
+	(*Empty)(nil),                   // 20: planx.plugin.v4.Empty
 }
 var file_plugin_proto_depIdxs = []int32{
 	6,  // 0: planx.plugin.v4.PluginDescriptor.documentation:type_name -> planx.plugin.v4.Documentation
 	2,  // 1: planx.plugin.v4.PluginDescriptor.components:type_name -> planx.plugin.v4.ComponentDescriptor
-	12, // 2: planx.plugin.v4.ComponentDescriptor.kind:type_name -> planx.plugin.v4.ComponentKind
-	13, // 3: planx.plugin.v4.ComponentDescriptor.config_schema:type_name -> planx.plugin.v4.ConfigSchema
+	16, // 2: planx.plugin.v4.ComponentDescriptor.kind:type_name -> planx.plugin.v4.ComponentKind
+	17, // 3: planx.plugin.v4.ComponentDescriptor.config_schema:type_name -> planx.plugin.v4.ConfigSchema
 	3,  // 4: planx.plugin.v4.ComponentDescriptor.capabilities:type_name -> planx.plugin.v4.Capabilities
 	5,  // 5: planx.plugin.v4.ComponentDescriptor.status:type_name -> planx.plugin.v4.ComponentStatus
-	14, // 6: planx.plugin.v4.Capabilities.delivery:type_name -> planx.plugin.v4.DeliverySemantics
+	18, // 6: planx.plugin.v4.Capabilities.delivery:type_name -> planx.plugin.v4.DeliverySemantics
 	4,  // 7: planx.plugin.v4.Capabilities.parallelism:type_name -> planx.plugin.v4.ParallelismSpec
-	15, // 8: planx.plugin.v4.ComponentStatus.maturity:type_name -> planx.plugin.v4.Maturity
+	19, // 8: planx.plugin.v4.ComponentStatus.maturity:type_name -> planx.plugin.v4.Maturity
 	7,  // 9: planx.plugin.v4.Documentation.examples:type_name -> planx.plugin.v4.Example
 	0,  // 10: planx.plugin.v4.HealthStatus.state:type_name -> planx.plugin.v4.HealthStatus.State
 	11, // 11: planx.plugin.v4.ConfigValidationResult.details:type_name -> planx.plugin.v4.ValidationDetail
-	16, // 12: planx.plugin.v4.PluginService.Discover:input_type -> planx.plugin.v4.Empty
-	16, // 13: planx.plugin.v4.PluginService.Health:input_type -> planx.plugin.v4.Empty
-	9,  // 14: planx.plugin.v4.PluginService.ValidateConfig:input_type -> planx.plugin.v4.ConfigValidationRequest
-	1,  // 15: planx.plugin.v4.PluginService.Discover:output_type -> planx.plugin.v4.PluginDescriptor
-	8,  // 16: planx.plugin.v4.PluginService.Health:output_type -> planx.plugin.v4.HealthStatus
-	10, // 17: planx.plugin.v4.PluginService.ValidateConfig:output_type -> planx.plugin.v4.ConfigValidationResult
-	15, // [15:18] is the sub-list for method output_type
-	12, // [12:15] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	14, // 12: planx.plugin.v4.DiscoverSchemaResponse.tables:type_name -> planx.plugin.v4.TableInfo
+	15, // 13: planx.plugin.v4.DiscoverSchemaResponse.columns:type_name -> planx.plugin.v4.ColumnInfo
+	20, // 14: planx.plugin.v4.PluginService.Discover:input_type -> planx.plugin.v4.Empty
+	20, // 15: planx.plugin.v4.PluginService.Health:input_type -> planx.plugin.v4.Empty
+	9,  // 16: planx.plugin.v4.PluginService.ValidateConfig:input_type -> planx.plugin.v4.ConfigValidationRequest
+	12, // 17: planx.plugin.v4.PluginService.DiscoverSchema:input_type -> planx.plugin.v4.DiscoverSchemaRequest
+	1,  // 18: planx.plugin.v4.PluginService.Discover:output_type -> planx.plugin.v4.PluginDescriptor
+	8,  // 19: planx.plugin.v4.PluginService.Health:output_type -> planx.plugin.v4.HealthStatus
+	10, // 20: planx.plugin.v4.PluginService.ValidateConfig:output_type -> planx.plugin.v4.ConfigValidationResult
+	13, // 21: planx.plugin.v4.PluginService.DiscoverSchema:output_type -> planx.plugin.v4.DiscoverSchemaResponse
+	18, // [18:22] is the sub-list for method output_type
+	14, // [14:18] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_plugin_proto_init() }
@@ -1020,7 +1259,7 @@ func file_plugin_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_plugin_proto_rawDesc), len(file_plugin_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   11,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
