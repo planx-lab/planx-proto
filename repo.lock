@@ -4,9 +4,9 @@
 ## Authority
 
 MUST comply with:
-1. [planx-architecture.md](../planx-architecture.md)
-2. [planx-ai-guardrails.md](../planx-ai-guardrails.md)
-3. [AI_CONTRACT.md](../AI_CONTRACT.md)
+1. [planx-architecture.md](../planx-spec/planx-architecture.md)
+2. [planx-ai-guardrails.md](../planx-spec/planx-ai-guardrails.md)
+3. [AI_CONTRACT.md](../planx-spec/AI_CONTRACT.md)
 
 ---
 
@@ -38,7 +38,7 @@ IMPORT POLICY
 ALLOWED IMPORTERS:
 - planx-engine
 - planx-sdk-*
-- planx-plugin-*
+- External plugins consume the public SDK, not Proto directly
 
 FORBIDDEN IMPORTERS:
 - planx-common (no infra dependency)
@@ -50,7 +50,8 @@ MODIFICATION RULES
 
 1. Backward compatibility is NOT required before v4.0 GA.
 2. Any change MUST be explicitly versioned (v4 only).
-3. No experimental or optional fields.
+3. No speculative or unjustified fields. Preserve approved optional-field
+   presence semantics; absent and explicitly supplied zero are not interchangeable.
 4. No engine- or sdk-specific assumptions.
 
 ----------------------------------------
@@ -65,6 +66,8 @@ AI MUST NOT:
 
 AI MAY:
 - Generate code from existing proto
-- Add comments for clarification ONLY
+- Add comments for clarification
+- Make necessary protocol/consumer updates within the accepted ADR-017 scope;
+  unrelated protocol changes still require explicit authorization
 
 ----------------------------
