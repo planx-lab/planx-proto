@@ -128,6 +128,7 @@ message DiscoverSchemaResponse {
 message TableInfo {
   string schema = 1;                   // e.g. "public" (PG) / "dbo" (MSSQL)
   string name = 2;                     // e.g. "users_src"
+  string kind = 3;                     // TABLE or VIEW; empty means unknown.
 }
 
 message ColumnInfo {
