@@ -123,6 +123,7 @@ message DiscoverSchemaRequest {
 message DiscoverSchemaResponse {
   repeated TableInfo tables = 1;       // populated when config has no table
   repeated ColumnInfo columns = 2;     // populated when config has a table
+  TargetTableMetadata target_metadata = 3; // optional; only when a Sink inspected a selected target
 }
 
 message TableInfo {
@@ -135,4 +136,25 @@ message ColumnInfo {
   string name = 1;
   string type = 2;                     // DB type name (e.g. "integer", "varchar")
   bool nullable = 3;
+}
+
+// Read-only target evidence. Absence means unknown, including older external
+// components and Source discovery. An empty key list is conclusive only when
+// usable_upsert_keys_complete is true.
+message TargetTableMetadata {
+  repeated TargetColumnPolicy columns = 1; // exactly one policy per selected target column
+  repeated ColumnSet usable_upsert_keys = 2; // exact PostgreSQL ON CONFLICT arbiters, not all indexes
+  bool usable_upsert_keys_complete = 3;
+}
+
+message TargetColumnPolicy {
+  string name = 1;
+  bool has_default = 2; // omitted false flags mean false when this policy is present
+  bool generated = 3;
+  bool identity = 4;
+  bool identity_always = 5;
+}
+
+message ColumnSet {
+  repeated string columns = 1;
 }
