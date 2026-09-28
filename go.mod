@@ -1,6 +1,6 @@
 module github.com/planx-lab/planx-proto
 
-go 1.25.3
+go 1.27.1
 
 require (
 	google.golang.org/grpc v1.77.0
